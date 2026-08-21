@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Perjalanan cinta terindah kita. Selamat hari jadi, cintaku!">
+  <meta name="theme-color" content="#09070f">
+  <title>Happy Anniversary My Love ✨</title>
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient Glow Effect Layer -->
+  <div class="ambient-glow"></div>
+
+  <!-- Interactive Heart Burst Layer -->
+  <div id="heartBurstContainer" class="heart-burst-container"></div>
+
+  <!-- Love Toast Notification -->
+  <div id="loveToast" class="love-toast"></div>
+
+  <!-- ====================================================================
+       SCREEN 1: COVER / LOCK SCREEN (FULLSCREEN BLOCKING)
+       ==================================================================== -->
+  <section id="coverScreen" class="cover-screen" aria-label="Cover Pembuka">
+    <canvas id="coverCanvas" class="cover-canvas"></canvas>
+
+    <div class="cover-container">
+      <div class="cover-badge">✨ Special Anniversary Edition ✨</div>
+      
+      <div class="cover-icon-heart" aria-hidden="true">
+        <span>❤️</span>
+      </div>
+
+      <h1 id="coverTitle" class="cover-title">Happy Anniversary</h1>
+      <p id="coverCouple" class="cover-couple">Sayang & Aku</p>
+      
+      <p id="coverSubtitle" class="cover-desc">
+        Setiap detik bersamamu adalah lembaran cerita paling indah. Buka untuk memulai perjalanan kenangan kita.
+      </p>
+
+      <div id="coverDaysBadge" class="cover-days-pill">
+        <span>⏳</span>
+        <span id="coverDaysCount">Menghitung hari cinta kita...</span>
+      </div>
+
+      <button id="btnOpenStory" class="btn-open-story" type="button" aria-label="Buka Cerita Kenangan">
+        <span class="btn-icon-sparkle">✨</span>
+        <span>Buka Kenangan Kita</span>
+        <span class="btn-icon-sparkle">💖</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       SCREEN 2: MAIN SLIDESHOW APPLICATION
+       ==================================================================== -->
+  <main id="mainApp" class="main-app" aria-label="Slideshow Kenangan">
+    <!-- Story Progress Bars (Instagram Stories Style) -->
+    <div id="storyIndicators" class="story-indicators" aria-hidden="true"></div>
+
+    <!-- Top Header Bar -->
+    <header class="top-bar">
+      <div class="top-left-info">
+        <div class="couple-title-badge">
+          <span>Our Story</span>
+          <span>•</span>
+          <span id="topCoupleName" class="script-name">Sayang & Aku</span>
+        </div>
+        <div id="topDaysCounter" class="days-counter-pill" title="Lama Bersama">
+          <span>💖</span>
+          <span id="liveCounterText">365 Hari Bersama</span>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button id="btnLetter" class="top-btn" type="button" title="Buka Surat Cinta" aria-label="Surat Cinta">
+          <span>💌</span>
+        </button>
+        <button id="btnGallery" class="top-btn" type="button" title="Lihat Semua Kenangan" aria-label="Galeri Kenangan">
+          <span>🖼️</span>
+        </button>
+        <button id="btnHeartBurst" class="top-btn btn-heart-burst" type="button" title="Kirim Hujan Cinta" aria-label="Kirim Hati">
+          <span>💖</span>
+        </button>
+        <button id="btnFullscreen" class="top-btn" type="button" title="Layar Penuh" aria-label="Layar Penuh">
+          <span id="fullscreenIcon">⛶</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Slideshow Viewport -->
+    <section class="slideshow-viewport" id="slideshowViewport">
+      <div id="slidesTrack" class="slides-track">
+        <!-- Slides will be dynamically injected via script.js from config.js -->
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button id="navPrev" class="nav-arrow nav-prev" type="button" aria-label="Kenangan Sebelumnya">
+        <span>❮</span>
+      </button>
+      <button id="navNext" class="nav-arrow nav-next" type="button" aria-label="Kenangan Berikutnya">
+        <span>❯</span>
+      </button>
+
+      <!-- Bottom Right Controls (Slide Counter & Play/Pause) -->
+      <div class="nav-bottom-controls">
+        <button id="btnPlayPause" class="control-btn-circle" type="button" title="Jeda / Lanjut Slideshow" aria-label="Play/Pause">
+          <span id="playPauseIcon">⏸️</span>
+        </button>
+        <div id="slideCounter" class="slide-counter-badge">01 / 05</div>
+      </div>
+    </section>
+
+    <!-- Floating Vinyl Music Player Widget -->
+    <div class="music-widget-container" id="musicWidget">
+      <button id="btnVinylDisc" class="vinyl-disc-btn" type="button" title="Putar / Jeda Lagu" aria-label="Music Vinyl Player">
+        <div class="vinyl-center-label">🎵</div>
+      </button>
+      <div class="music-info-card">
+        <div class="music-title-wrap">
+          <span id="musicSongTitle" class="music-song-name">Memutar Lagu...</span>
+          <span id="musicArtistName" class="music-artist-name">Romantic Vibes</span>
+        </div>
+        <div class="equalizer-waves">
+          <span class="equalizer-bar"></span>
+          <span class="equalizer-bar"></span>
+          <span class="equalizer-bar"></span>
+          <span class="equalizer-bar"></span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ====================================================================
+       MODAL 1: SURAT CINTA (LOVE LETTER MODAL)
+       ==================================================================== -->
+  <div id="letterModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+    <div class="modal-card">
+      <button id="btnCloseLetter" class="modal-close-btn" type="button" aria-label="Tutup Surat">✕</button>
+      <div class="letter-header">
+        <div class="letter-wax-seal">💌</div>
+        <h2 id="letterTitle" class="letter-title">Surat Untukmu</h2>
+        <p id="letterSalutation" class="letter-salutation">Hai Sayangku,</p>
+      </div>
+      <div id="letterBody" class="letter-body"></div>
+      <div class="letter-footer">
+        <p id="letterClosing" class="letter-closing">Selamanya milikmu,</p>
+        <p id="letterAuthor" class="letter-author">Aku</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL 2: GALERI KENANGAN (MEMORIES GRID MODAL)
+       ==================================================================== -->
+  <div id="galleryModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="galleryTitle">
+    <div class="modal-card gallery-modal-card">
+      <button id="btnCloseGallery" class="modal-close-btn" type="button" aria-label="Tutup Galeri">✕</button>
+      <h2 id="galleryTitle" class="letter-title" style="text-align: center; margin-bottom: 5px;">Koleksi Kenangan Kita ✨</h2>
+      <p style="text-align: center; color: var(--text-dim); font-size: 0.88rem; margin-bottom: 20px;">Klik foto atau video untuk langsung menuju momen tersebut</p>
+      <div id="galleryGrid" class="gallery-grid"></div>
+    </div>
+  </div>
+
+  <!-- Background Audio Element -->
+  <audio id="bgAudio" preload="auto" loop></audio>
+
+  <!-- Load Configuration and Application Scripts -->
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
