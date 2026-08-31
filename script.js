@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let isPlaying = true;
   let slideTimer = null;
   let progressInterval = null;
-  let currentSlideDuration = config.slideshow?.defaultDuration || 6000;
+  let currentSlideDuration = config.slideshow?.defaultDuration || 7400;
   let progressStartTime = 0;
   let isUnlocked = false;
 
@@ -40,14 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const navPrev = document.getElementById("navPrev");
   const navNext = document.getElementById("navNext");
-  const btnPlayPause = document.getElementById("btnPlayPause");
-  const playPauseIcon = document.getElementById("playPauseIcon");
   const btnFullscreen = document.getElementById("btnFullscreen");
   const fullscreenIcon = document.getElementById("fullscreenIcon");
 
-  const btnVinylDisc = document.getElementById("btnVinylDisc");
-  const musicSongTitle = document.getElementById("musicSongTitle");
-  const musicArtistName = document.getElementById("musicArtistName");
   const bgAudio = document.getElementById("bgAudio");
 
   const btnLetter = document.getElementById("btnLetter");
@@ -81,14 +76,20 @@ document.addEventListener("DOMContentLoaded", () => {
       if (coverSubtitle && config.couple.subtitle) coverSubtitle.textContent = config.couple.subtitle;
     }
 
-    // Populate Music Info & Source
-    if (config.music) {
-      if (musicSongTitle) musicSongTitle.textContent = config.music.title || "Romantic Song";
-      if (musicArtistName) musicArtistName.textContent = config.music.artist || "Special For You";
-      if (bgAudio && config.music.url) {
-        bgAudio.src = config.music.url;
-        bgAudio.volume = 0.65;
-      }
+    // Populate Music Source
+    if (config.music && bgAudio && config.music.url) {
+      bgAudio.src = config.music.url;
+      bgAudio.volume = 0.65;
+
+      // Handle saat lagu selesai: pause & reset ke 0, serta percepat transisi jika berada di slide terakhir
+      bgAudio.addEventListener("ended", () => {
+        bgAudio.pause();
+        bgAudio.currentTime = 0;
+        const totalSlides = document.querySelectorAll(".slide-item").length || config.slides?.length || 1;
+        if (currentIndex === totalSlides - 1) {
+          nextSlide();
+        }
+      });
     }
 
     // Populate Letter Modal Info
@@ -136,8 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
             src="${slide.url}" 
             poster="${slide.poster || ''}" 
             playsinline 
-            preload="metadata"
-            muted
+            preload="auto"
           ></video>
         `;
       } else {
@@ -246,11 +246,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 1000);
     }
 
-    // Play Background Audio
+    // Prime / unlock audio for all videos on direct user interaction
+    const allVideos = document.querySelectorAll("video");
+    allVideos.forEach(v => {
+      v.muted = false;
+      v.volume = 1.0;
+      const p = v.play();
+      if (p !== undefined) {
+        p.then(() => {
+          v.pause();
+          v.currentTime = 0;
+        }).catch(() => {});
+      }
+    });
+
+    // Play Continuous Background Audio
     if (bgAudio && config.music?.autoplayOnUnlock) {
-      bgAudio.play().then(() => {
-        if (btnVinylDisc) btnVinylDisc.classList.add("playing");
-      }).catch((err) => {
+      bgAudio.play().catch((err) => {
         console.warn("Autoplay blocked or waiting for further gesture:", err);
       });
     }
@@ -262,8 +274,30 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ====================================================================
-     4. SLIDESHOW ENGINE & VIDEO SYNC
+     4. SLIDESHOW ENGINE & VIDEO SYNC WITH CINEMATIC AUDIO DUCKING
      ==================================================================== */
+  let bgAudioFadeTimer = null;
+  function fadeBackgroundAudio(targetVolume, duration = 600) {
+    if (!bgAudio) return;
+    clearInterval(bgAudioFadeTimer);
+
+    const startVolume = bgAudio.volume;
+    const startTime = Date.now();
+
+    bgAudioFadeTimer = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      // Smooth sinusoidal easeInOut
+      const ease = 0.5 - Math.cos(progress * Math.PI) / 2;
+      const newVol = startVolume + (targetVolume - startVolume) * ease;
+      bgAudio.volume = Math.max(0, Math.min(1, newVol));
+
+      if (progress >= 1) {
+        clearInterval(bgAudioFadeTimer);
+      }
+    }, 25);
+  }
+
   function updateSlideView(newIndex) {
     const slideItems = document.querySelectorAll(".slide-item");
     const indicatorItems = document.querySelectorAll(".story-indicator-item");
@@ -271,8 +305,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!slideItems.length) return;
 
-    // Handle previous slide video pause
-    const prevSlide = slideItems[currentIndex];
+    const prevIndex = currentIndex;
+    const totalSlides = slideItems.length;
+
+    // Handle previous slide video pause & reset
+    const prevSlide = slideItems[prevIndex];
     if (prevSlide) {
       const prevVideo = prevSlide.querySelector("video");
       if (prevVideo) {
@@ -281,7 +318,16 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    currentIndex = (newIndex + slideItems.length) % slideItems.length;
+    currentIndex = (newIndex + totalSlides) % totalSlides;
+
+    // Sinkronisasi Musik saat Muter Balik ke Awal (Slide 0)
+    const isLoopingToStart = (prevIndex === totalSlides - 1 && currentIndex === 0) || (newIndex >= totalSlides && currentIndex === 0);
+    if (isLoopingToStart && bgAudio) {
+      bgAudio.currentTime = 0;
+      if (isUnlocked && isPlaying) {
+        bgAudio.play().catch(() => {});
+      }
+    }
 
     // Update Slide DOM
     slideItems.forEach((slide, idx) => {
@@ -310,11 +356,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Update Slide Counter
     if (slideCounter) {
       const currentNum = String(currentIndex + 1).padStart(2, "0");
-      const totalNum = String(slideItems.length).padStart(2, "0");
+      const totalNum = String(totalSlides).padStart(2, "0");
       slideCounter.textContent = `${currentNum} / ${totalNum}`;
     }
 
-    // Check Active Slide Type
+    // Check Active Slide Type & Audio Ducking (Cinematic MV Style)
     const currentSlideData = config.slides[currentIndex];
     const currentSlideEl = slideItems[currentIndex];
 
@@ -322,11 +368,28 @@ document.addEventListener("DOMContentLoaded", () => {
       const videoEl = currentSlideEl.querySelector("video");
       if (videoEl) {
         videoEl.currentTime = 0;
-        videoEl.play().catch(e => console.log("Video autoplay caught:", e));
+        videoEl.muted = false;
+        videoEl.volume = 1.0;
+        const playPromise = videoEl.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            videoEl.muted = false;
+            videoEl.volume = 1.0;
+          }).catch((e) => {
+            console.warn("Unmuted autoplay restricted, attempting recovery:", e);
+            videoEl.muted = false;
+            videoEl.play().catch(() => {});
+          });
+        }
       }
-      currentSlideDuration = currentSlideData.duration || 8000;
+
+      // MV Style: Turunkan volume musik latar ke 20% (0.20) secara halus agar suara akad jelas dan musik latar tetap terdengar
+      fadeBackgroundAudio(0.20, 500);
+      currentSlideDuration = currentSlideData.duration || 8600;
     } else {
-      currentSlideDuration = config.slideshow?.defaultDuration || 6000;
+      // Kembalikan volume musik latar ke volume normal (65%)
+      fadeBackgroundAudio(0.65, 800);
+      currentSlideDuration = currentSlideData?.duration || config.slideshow?.defaultDuration || 7400;
     }
 
     // Reset Progress & Timer if unlocked
@@ -375,18 +438,43 @@ document.addEventListener("DOMContentLoaded", () => {
       playPauseIcon.textContent = isPlaying ? "⏸️" : "▶️";
     }
 
+    const currentSlideEl = document.querySelector(".slide-item.active");
+    const currentVideo = currentSlideEl ? currentSlideEl.querySelector("video") : null;
+
     if (isPlaying) {
+      if (currentVideo) currentVideo.play().catch(() => {});
+      if (bgAudio && isUnlocked) bgAudio.play().catch(() => {});
       startSlideTimer();
     } else {
+      if (currentVideo) currentVideo.pause();
+      if (bgAudio) bgAudio.pause();
       clearTimeout(slideTimer);
       clearInterval(progressInterval);
+    }
+  }
+
+  function toggleMusicPlayback() {
+    if (!bgAudio) return;
+    if (bgAudio.paused) {
+      bgAudio.play().catch(() => {});
+      showLoveToast("Musik Diputar 🎵");
+    } else {
+      bgAudio.pause();
+      showLoveToast("Musik Dijeda 🔇");
     }
   }
 
   // Navigation Button Events
   if (navNext) navNext.addEventListener("click", () => { nextSlide(); });
   if (navPrev) navPrev.addEventListener("click", () => { prevSlide(); });
-  if (btnPlayPause) btnPlayPause.addEventListener("click", togglePlayPause);
+
+  // Click on video to unmute / toggle sound directly
+  document.addEventListener("click", (e) => {
+    if (e.target && e.target.tagName === "VIDEO") {
+      e.target.muted = false;
+      e.target.volume = 1.0;
+    }
+  });
 
   /* ====================================================================
      5. TOUCH / SWIPE GESTURES FOR MOBILE & TABLET
@@ -428,13 +516,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (e) => {
     if (!isUnlocked) return;
 
-    if (e.key === "ArrowRight") {
+    if (e.key === "ArrowRight" || e.key === " ") {
       nextSlide();
     } else if (e.key === "ArrowLeft") {
       prevSlide();
-    } else if (e.key === " ") {
-      e.preventDefault();
-      togglePlayPause();
     } else if (e.key.toLowerCase() === "f") {
       toggleFullscreenMode();
     } else if (e.key.toLowerCase() === "m") {
@@ -446,36 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* ====================================================================
-     7. FLOATING VINYL MUSIC PLAYER
-     ==================================================================== */
-  if (btnVinylDisc) {
-    btnVinylDisc.addEventListener("click", toggleMusicPlayback);
-  }
-
-  function toggleMusicPlayback() {
-    if (!bgAudio) return;
-
-    if (bgAudio.paused) {
-      bgAudio.play().then(() => {
-        btnVinylDisc.classList.add("playing");
-      }).catch(err => console.log(err));
-    } else {
-      bgAudio.pause();
-      btnVinylDisc.classList.remove("playing");
-    }
-  }
-
-  if (bgAudio) {
-    bgAudio.addEventListener("play", () => {
-      if (btnVinylDisc) btnVinylDisc.classList.add("playing");
-    });
-    bgAudio.addEventListener("pause", () => {
-      if (btnVinylDisc) btnVinylDisc.classList.remove("playing");
-    });
-  }
-
-  /* ====================================================================
-     8. DAYS TOGETHER LIVE COUNTER
+     7. DAYS TOGETHER LIVE COUNTER
      ==================================================================== */
   function startDaysCounter() {
     const startDateStr = config.couple?.startDate;
