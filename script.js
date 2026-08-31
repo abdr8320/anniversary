@@ -226,11 +226,49 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ====================================================================
      3. UNLOCK COVER SCREEN & AUTOPLAY MUSIC
      ==================================================================== */
+  let isPageReady = false;
+
+  function enableOpenButton() {
+    if (isPageReady) return;
+    isPageReady = true;
+
+    if (btnOpenStory) {
+      btnOpenStory.removeAttribute("disabled");
+      btnOpenStory.classList.remove("is-loading");
+      btnOpenStory.classList.add("is-ready");
+      btnOpenStory.innerHTML = `
+        <span class="btn-icon-sparkle">✨</span>
+        <span>Buka Kenangan Kita</span>
+        <span class="btn-icon-sparkle">💖</span>
+      `;
+    }
+  }
+
+  // Preload foto pertama agar transisi langsung mulus tanpa blank
+  function initAssetPreloader() {
+    const firstSlideUrl = config.slides?.[0]?.url || "images/ADT06864.JPG";
+    const preloadImg = new Image();
+    preloadImg.src = firstSlideUrl;
+
+    if (preloadImg.complete) {
+      setTimeout(enableOpenButton, 300);
+    } else {
+      preloadImg.onload = () => setTimeout(enableOpenButton, 300);
+      preloadImg.onerror = () => setTimeout(enableOpenButton, 300);
+    }
+
+    // Safety timeout: aktifkan maksimal dalam 2 detik
+    setTimeout(enableOpenButton, 2000);
+  }
+
+  initAssetPreloader();
+
   if (btnOpenStory) {
     btnOpenStory.addEventListener("click", unlockWebsite);
   }
 
   function unlockWebsite() {
+    if (!isPageReady) return;
     if (isUnlocked) return;
     isUnlocked = true;
 
