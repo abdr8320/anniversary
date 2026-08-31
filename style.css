@@ -223,13 +223,49 @@ html, body {
   100% { background-position: 0% 50%; }
 }
 
-.btn-open-story:hover {
+.btn-open-story:hover:not(:disabled) {
   transform: translateY(-3px) scale(1.02);
   box-shadow: 0 15px 35px rgba(255, 117, 140, 0.65);
 }
 
-.btn-open-story:active {
+.btn-open-story:active:not(:disabled) {
   transform: translateY(1px) scale(0.98);
+}
+
+.btn-open-story.is-loading,
+.btn-open-story:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 117, 140, 0.4) 0%, rgba(138, 58, 185, 0.4) 100%);
+  box-shadow: none;
+  animation: pulseLoadingBtn 1.8s ease-in-out infinite;
+}
+
+@keyframes pulseLoadingBtn {
+  0%, 100% { transform: scale(0.98); opacity: 0.65; }
+  50% { transform: scale(1); opacity: 0.9; }
+}
+
+.btn-loading-spinner {
+  display: inline-block;
+  font-size: 1.15rem;
+  animation: spinHourglass 2s ease-in-out infinite;
+}
+
+@keyframes spinHourglass {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.btn-open-story.is-ready {
+  animation: gradientShift 4s ease infinite, readyPulse 2s ease infinite;
+}
+
+@keyframes readyPulse {
+  0%, 100% { box-shadow: 0 10px 25px rgba(255, 117, 140, 0.45); }
+  50% { box-shadow: 0 14px 38px rgba(255, 117, 140, 0.85); }
 }
 
 .btn-icon-sparkle {
