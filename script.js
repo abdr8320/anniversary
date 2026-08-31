@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentSlideDuration = config.slideshow?.defaultDuration || 7400;
   let progressStartTime = 0;
   let isUnlocked = false;
-  let isPageFullyLoaded = false;
 
   // Touch Swipe Variables
   let touchStartX = 0;
@@ -227,39 +226,11 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ====================================================================
      3. UNLOCK COVER SCREEN & AUTOPLAY MUSIC
      ==================================================================== */
-  function enableOpenButton() {
-    if (isPageFullyLoaded) return;
-    isPageFullyLoaded = true;
-
-    if (btnOpenStory) {
-      btnOpenStory.removeAttribute("disabled");
-      btnOpenStory.classList.remove("is-loading");
-      btnOpenStory.classList.add("is-ready");
-      btnOpenStory.innerHTML = `
-        <span class="btn-icon-sparkle">✨</span>
-        <span>Buka Kenangan Kita</span>
-        <span class="btn-icon-sparkle">💖</span>
-      `;
-    }
-  }
-
-  // Aktifkan tombol saat seluruh page & resources selesai dimuat
-  if (document.readyState === "complete") {
-    enableOpenButton();
-  } else {
-    window.addEventListener("load", () => {
-      setTimeout(enableOpenButton, 350);
-    });
-    // Fallback timer jika ada external resource yang lambat
-    setTimeout(enableOpenButton, 4000);
-  }
-
   if (btnOpenStory) {
     btnOpenStory.addEventListener("click", unlockWebsite);
   }
 
   function unlockWebsite() {
-    if (!isPageFullyLoaded) return;
     if (isUnlocked) return;
     isUnlocked = true;
 
