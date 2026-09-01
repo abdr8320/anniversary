@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let isPlaying = true;
   let slideTimer = null;
   let progressInterval = null;
-  let currentSlideDuration = config.slideshow?.defaultDuration || 7400;
+  let currentSlideDuration = config.slideshow?.defaultDuration || 6660;
   let progressStartTime = 0;
   let isUnlocked = false;
 
@@ -427,7 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       // Kembalikan volume musik latar ke volume normal (65%)
       fadeBackgroundAudio(0.65, 800);
-      currentSlideDuration = currentSlideData?.duration || config.slideshow?.defaultDuration || 7400;
+      currentSlideDuration = currentSlideData?.duration || config.slideshow?.defaultDuration || 6660;
     }
 
     // Reset Progress & Timer if unlocked

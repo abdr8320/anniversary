@@ -27,12 +27,12 @@ const ANNIVERSARY_CONFIG = {
 
   // Pengaturan Slideshow (Pas untuk durasi lagu 4 menit 35 detik / 275 detik)
   slideshow: {
-    defaultDuration: 7400, // Durasi tiap foto dalam milidetik (7400ms = 7.4 detik)
+    defaultDuration: 6660, // Durasi tiap foto dalam milidetik (6660ms = 6.66 detik)
     autoPlay: true,        // Slideshow berganti otomatis
     kenBurnsEffect: true,  // Efek zoom sinematik bergerak pada foto
   },
 
-  // Daftar 37 Slide Kenangan Terbaik (Kronologis & Storytelling sesuai Momen Foto)
+  // Daftar 41 Slide Kenangan Terbaik (Kronologis & Storytelling sesuai Momen Foto)
   slides: [
     {
       type: "image",
@@ -206,6 +206,14 @@ const ANNIVERSARY_CONFIG = {
     },
     {
       type: "image",
+      url: "images/ADT07811.JPG",
+      date: "01 September 2024 • 11:51",
+      location: "Area Luar Gedung / Sandaran Kasih Terhangat",
+      title: "Sandaran Hati & Senyum Terindahmu 💕",
+      caption: "Bersandar di pundakmu dengan rasa aman dan damai, senyuman manismu adalah pelangi terindah dalam hidupku."
+    },
+    {
+      type: "image",
       url: "images/GMS08665.JPG",
       date: "01 September 2024 • 11:53",
       location: "Taman Rindang / Genggaman Cinta Abadi B&W",
@@ -227,6 +235,14 @@ const ANNIVERSARY_CONFIG = {
       location: "Lorong Resepsi / Kirab Kehormatan Orang Tua",
       title: "Langkah Kehormatan Orang Tua Kami 🤍",
       caption: "Langkah penuh wibawa kedua orang tua kami yang mengawali prosesi resepsi dengan doa dan senyuman bangga."
+    },
+    {
+      type: "image",
+      url: "images/GMS08812.JPG",
+      date: "01 September 2024 • 13:20",
+      location: "Pintu Masuk Resepsi / Kirab Pengantin Bernuansa Biru",
+      title: "Lambaian Cinta di Hari Bahagia 👋💙",
+      caption: "Melangkah bersama disambut senyum dan lambaian hangat para tamu, merayakan kebahagiaan kita di hari yang penuh berkah."
     },
     {
       type: "image",
@@ -259,6 +275,14 @@ const ANNIVERSARY_CONFIG = {
       location: "Pelaminan Resepsi / Bersama Keluarga Inti",
       title: "Keluarga Tercinta & Rumah Tempat Pulang 🏡💖",
       caption: "Keluarga adalah anugerah terindah tempat kami selalu menemukan rasa aman, cinta, dan dukungan tanpa henti."
+    },
+    {
+      type: "image",
+      url: "images/ADT08289.JPG",
+      date: "01 September 2024 • 14:10",
+      location: "Pelaminan Resepsi / Ceria Bersama Keluarga Besar",
+      title: "Keceriaan & Tawa Keluarga Besar 🎊👨‍👩‍👧‍👦",
+      caption: "Penuh canda tawa dan pose ceria bersama keluarga besar, menghadirkan sejuta kehangatan di pelaminan resepsi kita."
     },
     {
       type: "image",
@@ -307,6 +331,14 @@ const ANNIVERSARY_CONFIG = {
       location: "Area Luar Gedung / Potret Anggun Sang Istri",
       title: "Bidadari Tercantik di Hatiku 🌹👰‍♀️",
       caption: "Senyum manismu yang menenangkan, keanggunan paras dan ketulusan hatimu yang selalu membuatku jatuh cinta setiap hari."
+    },
+    {
+      type: "image",
+      url: "images/GMS09122.JPG",
+      date: "01 September 2024 • 17:08",
+      location: "Area Luar Gedung / Ciuman Hangat Penuh Kasih",
+      title: "Kasih Sayang & Pelukan Kakak Tercinta 🌸🥰",
+      caption: "Kecupan hangat dan doa tulus dari kakak tercinta yang selalu setia menemani di setiap langkah perjalanan hidup."
     },
     {
       type: "image",
